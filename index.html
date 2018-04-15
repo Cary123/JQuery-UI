@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>拖动</title>
+    <style>
+        #left h2 {
+            font-size: 18px;
+            color: #0d88c1;
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .hello {
+            width: 400px;
+            float: left;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid #000;
+            overflow-y: auto;
+        }
+
+        .world {
+            width: 600px;
+            float: left;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid #000;
+            overflow-y: auto;
+        }
+
+        .label_info {
+            font-size: 14px;
+            font-weight: bold;
+            width: 300px;
+            display: inline-block;
+            padding: 0 20px;
+            text-align: left;
+            margin: 0px 0 2px 0;
+            color: #091114;
+            background-color: #fdfdfd;
+        }
+
+        ul {
+            margin: 0 0;
+            padding: 0 0;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        #div_001 {
+            margin: 0px 0 2px 0;
+            padding: 4px 0;
+        }
+
+        #table1 {
+            border: 0;
+        }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="./jquery-ui-1.12.1//jquery-ui.min.css" />
+    <script type="text/javascript" src="./jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="./jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="./index.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#left").accordion({
+                collapsible: false
+
+            });
+
+            $("#table1 tbody").sortable({
+                revert: true
+            });
+
+            $("#table1 tr").disableSelection();
+
+            $("#left li label").draggable({
+                opacity: 0.5,
+                appendTo: "body",
+                helper: "clone",
+                scroll: true
+
+            });
+
+            $("#right").droppable({
+                activeClass: "ui-state-default",
+                hoverClass: "ui-state-hover",
+                accept: ":not(.ui-sortable-helper)",
+                connectToSortable: "#sortable tbody",
+                drop: function (event, ui) {
+                    var target = event.target;
+                    var ta = target.toElement;
+                    var da = ui.draggable;
+                    var pa = ui.droppable;
+                    var arr = new Array();
+                    var toElem = ui.position; //放置位置
+                    var a = ui.offset; //放置位置
+                    var b = ui.offset.left; //放置位置
+                    var c = ui.offset.top; //放置位置
+
+                    var showGrid = false;
+                    var rawLength = $("#table1").find("tr").length;
+                    var columnLength = 0;
+                    if (rawLength > 0) {
+                        columnLength = $("#table1").find("tr").eq(0).find("td").length;
+                        for (var i = 0; i < rawLength; i++) {
+                            arr[i] = new Array(columnLength);
+                            for (var j = 0; j < columnLength; j++) {
+                                var spanTag = $("#table1").find("tr").eq(i).find("td").eq(j);
+                                if (spanTag != null && spanTag.find("span").length != 0) {
+                                    arr[i][j] = 1;
+                                }
+                                else {
+                                    arr[i][j] = 0;
+                                }
+                            }
+                        }
+                        if (showGrid) {
+
+                        }
+                        else {
+                            var trBegin = '<tr style="word-break:break-all;width:100%">';
+                            var trEnd = '</tr>';
+                            var trHtml = trBegin;
+                            var labelHtml = '<span width="120px" style="color:#000000;font-style:normal;font-weight:normal;font-family:Verdana;font-size:14;text-decoration:none;background-color:White">' + ui.draggable.text() + '</span>';
+                            var fieldHtml = '<span width="200px" style="color:#000000;font-style:normal;font-weight:bold;font-family:Verdana;font-size:14;text-decoration:none;background-color:White">XXXXXXXX</span>';
+                            var firstTime = 0;
+                            for (var i = 0; i < arr[arr.length - 1].length; i++) {
+                                if (arr[arr.length - 1][i] == 0) {
+                                    trHtml += "<td></td>"
+                                }
+                                else {
+                                    if (firstTime == 0) {
+                                        firstTime++;
+                                        trHtml = trHtml + "<td>" + labelHtml + "</td>";
+                                    }
+                                    else {
+                                        trHtml = trHtml + "<td>" + fieldHtml + "</td>";
+                                    }
+                                }
+                            }
+                            trHtml = trHtml + trEnd;
+                            $("#table1").append(trHtml);
+                        }
+                    }
+                }
+            });
+
+            $("#btnTest").click(function () {
+                var arr = ['one', 'two', 'three'];
+                var obj = { one: 1, two: 2, three: 3 };
+                $.each(arr, function (n, value) { $("#divTest").append('<li>' + n + ',' + value + '</li>'); })
+                $.each(obj, function (name, value) { $("#divTest").append('<li>' + name + ',' + value + '</li>'); })
+            });
+
+        });
+
+
+    </script>
+</head>
+
+<body>
+    <h2>拖放（Drag 和 drop）</h2>
+    <!-- 左边元素框 -->
+    <div id="left" class="hello">
+        <h2>
+            <a href="#">Response Field</a>
+        </h2>
+        <div id="div_001">
+            <ul>
+                <li>
+                    <label class="label_info" name="Vehicle Year">Vehicle Year</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Vehicle Year">Lisense Number</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Vehicle Year">Name</label>
+                </li>
+            </ul>
+        </div>
+        <h2>
+            <a href="#">Response Header</a>
+        </h2>
+        <div id="div_001">
+            <ul>
+                <li>
+                    <label class="label_info" name="Vehicle Year">A</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Vehicle Year">B</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Vehicle Year">C</label>
+                </li>
+            </ul>
+        </div>
+        <h2>
+            <a href="#">Response Attachment</a>
+        </h2>
+        <div id="div_001">
+            <ul>
+                <li>
+                    <label class="label_info" name="Vehicle Year">Vehicle Year</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Lisense Number">Lisense Number</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Name Year">Name</label>
+                </li>
+                <li>
+                    <label class="label_info" name="City Year">City</label>
+                </li>
+                <li>
+                    <label class="label_info" name="MakeCode Year">MakeCode</label>
+                </li>
+                <li>
+                    <label class="label_info" name="Any Year">Any</label>
+                </li>
+                <li>
+                    <label class="label_info" name="More Year">More</label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 右边元素框 -->
+    <div id="right" style="background-color: #ffffff" class="world">
+        <table id='table1' class="ui-widget-content">
+            <tbody>
+                <tr id="tr_response_1" style="word-break:break-all;width:100%">
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                </tr>
+                <tr id="tr_response_2" style="word-break:break-all;width:100%">
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                </tr>
+                <tr id="tr_response_3" style="word-break:break-all;width:100%">
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <span style="color:#000000;font-style:normal;font-weight:normal;font-family:Verdana;font-size:14;text-decoration:none;background-color:White">Agency</span>
+                    </td>
+                    <td>
+                        <span style="color:#000000;font-style:normal;font-weight:bold;font-family:Verdana;font-size:14;text-decoration:none;background-color:White">XXXXXXXX</span>
+                    </td>
+                </tr>
+                <tr id="tr_response_4" style="word-break:break-all;width:100%">
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <span style="color:#000000;font-style:normal;font-weight:normal;font-family:Verdana;font-size:14;text-decoration:none;background-color:White">Data Source</span>
+                    </td>
+                    <td>
+                        <span style="color:#000000;font-style:normal;font-weight:bold;font-family:Verdana;font-size:14;text-decoration:none;background-color:White">XXXXXXXX</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button id="btnTest">Test</button>
+    <div id="divTest">
+
+    </div>
+</body>
+
+</html>
